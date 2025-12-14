@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "willofnature",
+  "version": "${version}",
+  "name": "WillOfNature",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/willofnature/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      {
+        "adapter": "kotlin",
+        "value": "dev.ambershadow.willofnature.client.WillOfNatureDataGenerator"
+      }
+    ],
+    "client": [
+      "dev.ambershadow.willofnature.client.WillOfNatureClient"
+    ],
+    "main": [
+      "dev.ambershadow.willofnature.WillOfNature"
+    ]
+  },
+  "mixins": [
+    "willofnature.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-language-kotlin": ">=${kotlin_loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

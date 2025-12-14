@@ -1,0 +1,34 @@
+{
+  "item.willofnature.coke": "Coke",
+  "item.willofnature.ingot_aluminum": "Aluminum Ingot",
+  "item.willofnature.ingot_brass": "Brass Ingot",
+  "item.willofnature.ingot_bronze": "Bronze Ingot",
+  "item.willofnature.ingot_nickel": "Nickel Ingot",
+  "item.willofnature.ingot_silicon": "Silicon",
+  "item.willofnature.ingot_silver": "Silver Ingot",
+  "item.willofnature.ingot_steel": "Steel Ingot",
+  "item.willofnature.ingot_tin": "Tin Ingot",
+
+  "item.willofnature.dust_aluminum": "Aluminum Dust",
+  "item.willofnature.dust_brass": "Brass Dust",
+  "item.willofnature.dust_bronze": "Bronze Dust",
+  "item.willofnature.dust_coke": "Coke Dust",
+  "item.willofnature.dust_copper": "Copper Dust",
+  "item.willofnature.dust_gold": "Gold Dust",
+  "item.willofnature.dust_iron": "Iron Dust",
+  "item.willofnature.dust_nickel": "Nickel Dust",
+  "item.willofnature.dust_quartz": "Quartz Dust",
+  "item.willofnature.dust_silicon": "Silicon Dust",
+  "item.willofnature.dust_silver": "Silver Dust",
+  "item.willofnature.dust_steel": "Steel Dust",
+  "item.willofnature.dust_stone": "Stone Dust",
+  "item.willofnature.dust_sulfur": "Sulfur",
+  "item.willofnature.dust_tin": "Tin Dust",
+
+
+  "item_group.willofnature.items": "Will Of Nature Items",
+  "item_group.willofnature.blocks": "WIll Of Nature Blocks",
+  "block.willofnature.won_furnace": "Furnace",
+  "block.willofnature.won_blast_furnace": "Blast Furnace",
+  "container.crusher": "Crusher"
+}

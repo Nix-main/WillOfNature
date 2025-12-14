@@ -1,0 +1,17 @@
+{
+  "type": "willofnature:won_blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.1,
+  "group": "emerald",
+  "ingredient": {
+    "item": "minecraft:cobblestone"
+  },
+  "result": {
+    "id": "minecraft:stone"
+  },
+  "fluid": {
+    "id": "minecraft:lava",
+    "amount": 50
+  }
+}
