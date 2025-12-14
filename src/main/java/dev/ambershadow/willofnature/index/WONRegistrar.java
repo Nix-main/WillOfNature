@@ -2,6 +2,7 @@ package dev.ambershadow.willofnature.index;
 
 import dev.ambershadow.willofnature.WillOfNature;
 import dev.ambershadow.willofnature.client.networking.UpdateFluidS2CPacket;
+import dev.ambershadow.willofnature.index.block.CrusherBlock;
 import dev.ambershadow.willofnature.index.networking.FillBucketC2SPacket;
 import dev.ambershadow.willofnature.index.networking.UpdateFluidC2SPacket;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -9,29 +10,30 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Items;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import org.apache.commons.lang3.function.TriFunction;
 
 import java.util.ArrayList;
@@ -43,19 +45,28 @@ import java.util.function.Function;
 public class
 WONRegistrar {
     private WONRegistrar(){}
+
+    private static final HashMap<ResourceKey<CreativeModeTab>, List<Item>> itemGroups = new HashMap<>();
+
+    static final Item COKE = register("coke", Item::new, new Item.Properties(), WONRegistrar.ITEMS_REGISTRY_KEY);
+    static final Block CRUSHER = WONRegistrar.register(
+            "crusher",
+            CrusherBlock::new,
+            Blocks.IRON_BLOCK.properties(),
+            true
+    );
+
     public static ResourceKey<CreativeModeTab> ITEMS_REGISTRY_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, WillOfNature.id("items"));
     private static final CreativeModeTab ITEMS = FabricItemGroup.builder()
-            .icon(Items.STICK::getDefaultInstance)
             .title(Component.translatable("item_group.willofnature.items"))
+            .icon(COKE::getDefaultInstance)
             .build();
 
     public static ResourceKey<CreativeModeTab> BLOCKS_REGISTRY_KEY = ResourceKey.create(Registries.CREATIVE_MODE_TAB, WillOfNature.id("blocks"));
     private static final CreativeModeTab BLOCKS = FabricItemGroup.builder()
-            .icon(Items.STICK::getDefaultInstance)
             .title(Component.translatable("item_group.willofnature.blocks"))
+            .icon(CRUSHER.asItem()::getDefaultInstance)
             .build();
-
-    private static final HashMap<ResourceKey<CreativeModeTab>, List<Item>> itemGroups = new HashMap<>();
 
     @SafeVarargs
     static Item register(String name, Function<Item.Properties, Item> factory, Item.Properties settings, ResourceKey<CreativeModeTab>... groups){
@@ -124,11 +135,20 @@ WONRegistrar {
         itemGroups.forEach((key, val) -> ItemGroupEvents.modifyEntriesEvent(key)
                 .register((itemGroup) -> val.forEach(itemGroup::accept)));
         itemGroups.clear();
+        ItemGroupEvents.modifyEntriesEvent(BLOCKS_REGISTRY_KEY).register((itemGroup) -> itemGroup.accept(CRUSHER));
+        ItemGroupEvents.modifyEntriesEvent(ITEMS_REGISTRY_KEY).register((itemGroup) -> itemGroup.accept(COKE));
 
         PayloadTypeRegistry.playS2C().register(UpdateFluidS2CPacket.ID, UpdateFluidS2CPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(UpdateFluidC2SPacket.ID, UpdateFluidC2SPacket.CODEC);
         PayloadTypeRegistry.playC2S().register(FillBucketC2SPacket.ID, FillBucketC2SPacket.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(UpdateFluidC2SPacket.ID, new UpdateFluidC2SPacket.Receiver());
         ServerPlayNetworking.registerGlobalReceiver(FillBucketC2SPacket.ID, new FillBucketC2SPacket.Receiver());
+    }
+
+    public static <H> List<H> getValuesOfType(Registry<H> registry){
+        return registry.holders().filter(value ->
+                value.is(key ->
+                        key.location().getNamespace().equals(WillOfNature.MOD_ID)))
+                .map(Holder.Reference::value).toList();
     }
 }

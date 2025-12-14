@@ -48,11 +48,5 @@ public class WONBlocks {
             WONRegistrar.BLOCKS_REGISTRY_KEY
     );
 
-    public static final Block CRUSHER = WONRegistrar.register(
-            "crusher",
-            CrusherBlock::new,
-            Blocks.IRON_BLOCK.properties(),
-            true,
-            WONRegistrar.BLOCKS_REGISTRY_KEY
-    );
+    public static final Block CRUSHER = WONRegistrar.CRUSHER;
 }
