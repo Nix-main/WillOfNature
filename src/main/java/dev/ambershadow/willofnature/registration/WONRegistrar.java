@@ -5,6 +5,7 @@ import dev.ambershadow.willofnature.client.networking.UpdateFluidS2CPacket;
 import dev.ambershadow.willofnature.index.block.CrusherBlock;
 import dev.ambershadow.willofnature.index.networking.FillBucketC2SPacket;
 import dev.ambershadow.willofnature.index.networking.UpdateFluidC2SPacket;
+import dev.ambershadow.willofnature.util.Multiblock;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -47,6 +48,7 @@ WONRegistrar {
     private WONRegistrar(){}
 
     private static final HashMap<ResourceKey<CreativeModeTab>, List<Item>> itemGroups = new HashMap<>();
+    private static final List<Multiblock> multiblocks = new ArrayList<>();
 
     static final Item COKE = register("coke", Item::new, new Item.Properties(), WONRegistrar.ITEMS_REGISTRY_KEY);
     static final Block CRUSHER = WONRegistrar.register(
@@ -103,11 +105,11 @@ WONRegistrar {
         return Registry.register(BuiltInRegistries.MENU, WillOfNature.id(name), new MenuType<>(factory, features));
     }
     static <T extends AbstractContainerMenu, D> ExtendedScreenHandlerType<T, D> register(String name, TriFunction<Integer, Inventory, D, T> factory, StreamCodec<? super RegistryFriendlyByteBuf, D> packetCodec){
-        return Registry.register(BuiltInRegistries.MENU, WillOfNature.id(name), new ExtendedScreenHandlerType<T, D>(factory::apply, packetCodec));
+        return Registry.register(BuiltInRegistries.MENU, WillOfNature.id(name), new ExtendedScreenHandlerType<>(factory::apply, packetCodec));
     }
 
     static <H extends RecipeInput, T extends Recipe<H>> RecipeType<T> register(String name){
-        return register(name, new RecipeType<T>(){
+        return register(name, new RecipeType<>() {
             @Override
             public String toString() {
                 return name;
@@ -123,6 +125,16 @@ WONRegistrar {
         return Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, WillOfNature.id(name), entry);
     }
 
+    static Multiblock register(String name, Multiblock.MultiblockSupplier supplier){
+        Multiblock mb = supplier.apply(WillOfNature.id(name));
+        multiblocks.add(mb);
+        return mb;
+    }
+
+    public static List<Multiblock> getMultiblocks(){
+        return multiblocks;
+    }
+
     public static void registerAll(){
         WONItems.init();
         WONBlocks.init();
@@ -130,6 +142,7 @@ WONRegistrar {
         WONScreenHandlers.init();
         WONRecipeTypes.init();
         WONRecipeSerializers.init();
+        WONMultiblocks.init();
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, ITEMS_REGISTRY_KEY, ITEMS);
         Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, BLOCKS_REGISTRY_KEY, BLOCKS);
         itemGroups.forEach((key, val) -> ItemGroupEvents.modifyEntriesEvent(key)
