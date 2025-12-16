@@ -1,4 +1,4 @@
-package dev.ambershadow.willofnature.index;
+package dev.ambershadow.willofnature.registration;
 
 import dev.ambershadow.willofnature.WillOfNature;
 import dev.ambershadow.willofnature.client.networking.UpdateFluidS2CPacket;

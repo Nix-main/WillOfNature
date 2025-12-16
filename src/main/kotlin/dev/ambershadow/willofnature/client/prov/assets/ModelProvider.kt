@@ -1,7 +1,7 @@
 package dev.ambershadow.willofnature.client.prov.assets
 
 
-import dev.ambershadow.willofnature.index.WONRegistrar.getValuesOfType
+import dev.ambershadow.willofnature.registration.WONRegistrar.getValuesOfType
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider
 import net.minecraft.core.registries.BuiltInRegistries

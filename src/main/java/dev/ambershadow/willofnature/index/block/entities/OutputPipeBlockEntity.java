@@ -1,6 +1,6 @@
 package dev.ambershadow.willofnature.index.block.entities;
 
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import dev.ambershadow.willofnature.util.FluidUpdateSender;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;

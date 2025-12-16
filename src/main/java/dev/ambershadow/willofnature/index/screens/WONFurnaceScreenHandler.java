@@ -1,6 +1,6 @@
 package dev.ambershadow.willofnature.index.screens;
 
-import dev.ambershadow.willofnature.index.WONScreenHandlers;
+import dev.ambershadow.willofnature.registration.WONScreenHandlers;
 import dev.ambershadow.willofnature.mixin.AbstractContainerMenuAccessor;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;

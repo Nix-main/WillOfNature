@@ -4,6 +4,8 @@ import dev.ambershadow.willofnature.index.recipe.WONBlastingRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.ambershadow.willofnature.util.Byproduct;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.ItemStack;
@@ -40,9 +42,9 @@ public class WONBlastingRecipeSerializer implements RecipeSerializer<WONBlasting
                         ItemStack.STRICT_CODEC.fieldOf("result").forGetter(r -> r.getResultItem(null)),
                         Codec.FLOAT.fieldOf("experience").orElse(0.0F).forGetter(WONBlastingRecipe::getExperience),
                         Codec.INT.fieldOf("cookingtime").orElse(200).forGetter(WONBlastingRecipe::getCookingTime),
-                        ItemStack.STRICT_CODEC.listOf(0, 3)
+                        Byproduct.CODEC.listOf()
                                 .optionalFieldOf("byproducts", List.of())
-                                .forGetter(r -> r.getByproducts(null)),
+                                .forGetter(WONBlastingRecipe::getByproducts),
                         FLUID_AMOUNT_CODEC.optionalFieldOf("fluid", new Tuple<>(Fluids.EMPTY, 0L))
                                 .forGetter(r -> new Tuple<>(r.getFluid(), r.getFluidAmount()))
                 ).apply(instance, WONBlastingRecipe::new)
@@ -61,10 +63,11 @@ public class WONBlastingRecipeSerializer implements RecipeSerializer<WONBlasting
         buf.writeFloat(recipe.getExperience());
         buf.writeVarInt(recipe.getCookingTime());
 
-        List<ItemStack> byproducts = recipe.getByproducts(null);
+        List<Byproduct> byproducts = recipe.getByproducts();
         buf.writeVarInt(byproducts.size());
-        for (ItemStack byproduct : byproducts) {
-            ItemStack.STREAM_CODEC.encode(buf, byproduct);
+        for (Byproduct byproduct : byproducts) {
+            ItemStack.STREAM_CODEC.encode(buf, byproduct.item());
+            ByteBufCodecs.FLOAT.encode(buf, byproduct.chance());
         }
         buf.writeResourceLocation(BuiltInRegistries.FLUID.getKey(recipe.getFluid()));
         buf.writeLong(recipe.getFluidAmount());
@@ -81,9 +84,9 @@ public class WONBlastingRecipeSerializer implements RecipeSerializer<WONBlasting
         int cookingTime = buf.readVarInt();
 
         int byproductCount = buf.readVarInt();
-        List<ItemStack> byproducts = new ArrayList<>();
+        var byproducts = new ArrayList<Byproduct>(byproductCount);
         for (int i = 0; i < byproductCount; i++) {
-            byproducts.add(ItemStack.STREAM_CODEC.decode(buf));
+            byproducts.add(new Byproduct(ItemStack.STREAM_CODEC.decode(buf), buf.readFloat()));
         }
         ResourceLocation fluidId = buf.readResourceLocation();
         Fluid fluid = BuiltInRegistries.FLUID.get(fluidId);

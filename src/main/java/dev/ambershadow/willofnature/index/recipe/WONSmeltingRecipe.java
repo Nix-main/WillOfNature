@@ -1,7 +1,8 @@
 package dev.ambershadow.willofnature.index.recipe;
 
-import dev.ambershadow.willofnature.index.WONRecipeSerializers;
-import dev.ambershadow.willofnature.index.WONRecipeTypes;
+import dev.ambershadow.willofnature.registration.WONRecipeSerializers;
+import dev.ambershadow.willofnature.registration.WONRecipeTypes;
+import dev.ambershadow.willofnature.util.Byproduct;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -19,11 +20,11 @@ public class WONSmeltingRecipe implements Recipe<RecipeInput> {
     private final ItemStack result;
     private final float experience;
     private final int cookingTime;
-    private final List<ItemStack> byproducts;
+    private final List<Byproduct> byproducts;
 
     public WONSmeltingRecipe(String group, CookingBookCategory category,
                              List<Ingredient> ingredients, ItemStack result,
-                             float experience, int cookingTime, List<ItemStack> byproducts) {
+                             float experience, int cookingTime, List<Byproduct> byproducts) {
         this.group = group;
         this.category = category;
         this.ingredients = List.copyOf(ingredients);
@@ -32,9 +33,9 @@ public class WONSmeltingRecipe implements Recipe<RecipeInput> {
         this.cookingTime = cookingTime;
         this.byproducts = List.copyOf(byproducts);
     }
-    public List<ItemStack> getByproducts(HolderLookup.Provider registries) {
-        List<ItemStack> copies = new ArrayList<>();
-        for (ItemStack byproduct : byproducts) {
+    public List<Byproduct> getByproducts() {
+        List<Byproduct> copies = new ArrayList<>();
+        for (Byproduct byproduct : byproducts) {
             copies.add(byproduct.copy());
         }
         return copies;
@@ -86,12 +87,12 @@ public class WONSmeltingRecipe implements Recipe<RecipeInput> {
         return false;
     }
 
-    public static boolean canFitByproducts(List<ItemStack> byproducts, List<ItemStack> slots) {
+    public static boolean canFitByproducts(List<Byproduct> byproducts, List<ItemStack> slots) {
         if (slots.size() != 3) return false;
 
         int placed = 0;
 
-        for (ItemStack byproduct : byproducts) {
+        for (Byproduct byproduct : byproducts) {
             boolean fit = false;
 
             for (ItemStack slot : slots) {
@@ -99,10 +100,10 @@ public class WONSmeltingRecipe implements Recipe<RecipeInput> {
                     fit = true;
                     break;
                 }
-                if (ItemStack.isSameItemSameComponents(slot, byproduct)) {
+                if (ItemStack.isSameItemSameComponents(slot, byproduct.item())) {
                     int max = slot.getMaxStackSize();
                     int current = slot.getCount();
-                    int reserved = byproduct.getCount();
+                    int reserved = byproduct.item().getCount();
 
                     if (current <= max - reserved) {
                         fit = true;

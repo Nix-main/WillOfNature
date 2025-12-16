@@ -1,7 +1,7 @@
 package dev.ambershadow.willofnature.index.block.entities;
 
 import dev.ambershadow.willofnature.client.networking.UpdateFluidS2CPacket;
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import dev.ambershadow.willofnature.index.recipe.WONBlastingRecipe;
 import dev.ambershadow.willofnature.index.screens.WONBlastFurnaceScreenHandler;
 import dev.ambershadow.willofnature.util.FluidUpdateSender;

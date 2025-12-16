@@ -1,6 +1,6 @@
 package dev.ambershadow.willofnature.index.block.entities;
 
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;

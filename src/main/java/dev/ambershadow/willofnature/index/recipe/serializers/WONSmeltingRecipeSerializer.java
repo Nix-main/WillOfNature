@@ -4,6 +4,8 @@ import dev.ambershadow.willofnature.index.recipe.WONSmeltingRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.ambershadow.willofnature.util.Byproduct;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -31,9 +33,9 @@ public class WONSmeltingRecipeSerializer implements RecipeSerializer<WONSmelting
                         ItemStack.STRICT_CODEC.fieldOf("result").forGetter(r -> r.getResultItem(null)),
                         Codec.FLOAT.fieldOf("experience").orElse(0.0F).forGetter(WONSmeltingRecipe::getExperience),
                         Codec.INT.fieldOf("cookingtime").orElse(200).forGetter(WONSmeltingRecipe::getCookingTime),
-                        ItemStack.STRICT_CODEC.listOf(0, 3)
+                        Byproduct.CODEC.listOf()
                                 .optionalFieldOf("byproducts", List.of())
-                                .forGetter(r -> r.getByproducts(null))
+                                .forGetter(WONSmeltingRecipe::getByproducts)
                 ).apply(instance, WONSmeltingRecipe::new)
         );
         this.packetCodec = StreamCodec.of(
@@ -56,10 +58,11 @@ public class WONSmeltingRecipeSerializer implements RecipeSerializer<WONSmelting
         buf.writeFloat(recipe.getExperience());
         buf.writeVarInt(recipe.getCookingTime());
 
-        List<ItemStack> byproducts = recipe.getByproducts(null);
+        List<Byproduct> byproducts = recipe.getByproducts();
         buf.writeVarInt(byproducts.size());
-        for (ItemStack byproduct : byproducts) {
-            ItemStack.STREAM_CODEC.encode(buf, byproduct);
+        for (Byproduct byproduct : byproducts) {
+            ItemStack.STREAM_CODEC.encode(buf, byproduct.item());
+            ByteBufCodecs.FLOAT.encode(buf, byproduct.chance());
         }
     }
 
@@ -78,9 +81,9 @@ public class WONSmeltingRecipeSerializer implements RecipeSerializer<WONSmelting
         int cookingTime = buf.readVarInt();
 
         int byproductCount = buf.readVarInt();
-        List<ItemStack> byproducts = new ArrayList<>();
+        List<Byproduct> byproducts = new ArrayList<>(byproductCount);
         for (int i = 0; i < byproductCount; i++) {
-            byproducts.add(ItemStack.STREAM_CODEC.decode(buf));
+            byproducts.add(new Byproduct(ItemStack.STREAM_CODEC.decode(buf), buf.readFloat()));
         }
 
         return new WONSmeltingRecipe(group, category, ingredients, result, experience, cookingTime, byproducts);

@@ -1,7 +1,7 @@
 package dev.ambershadow.willofnature.index.block;
 
 import com.mojang.serialization.MapCodec;
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import dev.ambershadow.willofnature.index.block.entities.CrusherBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;

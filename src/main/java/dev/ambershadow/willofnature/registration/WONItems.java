@@ -1,4 +1,4 @@
-package dev.ambershadow.willofnature.index;
+package dev.ambershadow.willofnature.registration;
 
 import net.minecraft.world.item.Item;
 

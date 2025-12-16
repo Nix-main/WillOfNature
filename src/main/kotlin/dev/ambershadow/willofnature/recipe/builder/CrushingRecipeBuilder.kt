@@ -1,11 +1,11 @@
 package dev.ambershadow.willofnature.recipe.builder
 
 import dev.ambershadow.willofnature.index.recipe.CrushingRecipe
-import net.minecraft.advancements.Advancement
+import dev.ambershadow.willofnature.util.Byproduct
+import net.minecraft.advancements.AdvancementRequirements.Strategy
+import net.minecraft.advancements.AdvancementRewards.Builder
 import net.minecraft.advancements.Criterion
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger
-import net.minecraft.advancements.AdvancementRequirements.Strategy;
-import net.minecraft.advancements.AdvancementRewards.Builder;
 import net.minecraft.core.NonNullList
 import net.minecraft.data.recipes.RecipeBuilder
 import net.minecraft.data.recipes.RecipeOutput
@@ -41,10 +41,10 @@ import net.minecraft.world.level.ItemLike
 }
  */
 class CrushingRecipeBuilder(private val result: ItemLike, private val count: Int) : RecipeBuilder {
-    private var group: String? = null;
+    private var group: String? = null
     private lateinit var input: Ingredient
     private var time = 0
-    private var byproducts: NonNullList<ItemStack> = NonNullList.create()
+    private var byproducts: NonNullList<Byproduct> = NonNullList.create()
     private var energy = -1
     private var criteria = mutableMapOf<String, Criterion<*>>()
 
@@ -65,8 +65,8 @@ class CrushingRecipeBuilder(private val result: ItemLike, private val count: Int
         return this
     }
 
-    fun byproduct(item: ItemLike, count: Int = 1): CrushingRecipeBuilder {
-        this.byproducts.add(ItemStack(item, count))
+    fun byproduct(item: ItemLike, count: Int = 1, chance: Float = 1f): CrushingRecipeBuilder {
+        this.byproducts.add(Byproduct(ItemStack(item, count), chance))
         return this
     }
 
@@ -87,8 +87,8 @@ class CrushingRecipeBuilder(private val result: ItemLike, private val count: Int
         val advancement = output.advancement()
             .addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id))
             .rewards(Builder.recipe(id))
-            .requirements(Strategy.OR);
-        criteria.forEach(advancement::addCriterion);
+            .requirements(Strategy.OR)
+        criteria.forEach(advancement::addCriterion)
         val shapelessRecipe = CrushingRecipe(group ?: "", input, ItemStack(result, count), time, byproducts, energy)
         output.accept(
             id, shapelessRecipe,

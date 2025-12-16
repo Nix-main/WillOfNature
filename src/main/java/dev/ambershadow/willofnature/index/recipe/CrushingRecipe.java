@@ -1,8 +1,9 @@
 package dev.ambershadow.willofnature.index.recipe;
 
-import dev.ambershadow.willofnature.index.WONRecipeSerializers;
-import dev.ambershadow.willofnature.index.WONRecipeTypes;
+import dev.ambershadow.willofnature.registration.WONRecipeSerializers;
+import dev.ambershadow.willofnature.registration.WONRecipeTypes;
 import dev.ambershadow.willofnature.mixin.RecipeManagerAccessor;
+import dev.ambershadow.willofnature.util.Byproduct;
 import dev.ambershadow.willofnature.util.CrushingRecipeInput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -29,11 +30,11 @@ public class CrushingRecipe implements Recipe<CrushingRecipeInput> {
     private final Ingredient ingredient;
     private final ItemStack result;
     private final int time;
-    private final List<ItemStack> byproducts;
+    private final List<Byproduct> byproducts;
     private final int energy;
 
     public CrushingRecipe(String group, Ingredient ingredient, ItemStack result,
-                          int cookingTime, List<ItemStack> byproducts, int energy) {
+                          int cookingTime, List<Byproduct> byproducts, int energy) {
         this.group = group;
         this.ingredient = ingredient;
         this.result = result;
@@ -90,7 +91,7 @@ public class CrushingRecipe implements Recipe<CrushingRecipeInput> {
     public int getTime(){
         return time;
     }
-    public List<ItemStack> getByproducts(){
+    public List<Byproduct> getByproducts(){
         return byproducts;
     }
 }

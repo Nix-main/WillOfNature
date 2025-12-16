@@ -1,6 +1,6 @@
 package dev.ambershadow.willofnature.index.block.entities;
 
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import dev.ambershadow.willofnature.index.screens.WONFurnaceScreenHandler;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;

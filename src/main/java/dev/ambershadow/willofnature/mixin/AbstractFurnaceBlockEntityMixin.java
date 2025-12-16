@@ -3,6 +3,7 @@ package dev.ambershadow.willofnature.mixin;
 import dev.ambershadow.willofnature.index.recipe.WONBlastingRecipe;
 import dev.ambershadow.willofnature.index.recipe.WONSmeltingRecipe;
 import dev.ambershadow.willofnature.util.BlastingRecipeInput;
+import dev.ambershadow.willofnature.util.Byproduct;
 import dev.ambershadow.willofnature.util.SmeltingRecipeInput;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
@@ -98,24 +99,23 @@ public abstract class AbstractFurnaceBlockEntityMixin {
     @Inject(method = "burn", at = @At("RETURN"))
     private static void onCraftRecipe(RegistryAccess registryManager, RecipeHolder<?> recipe, NonNullList<ItemStack> slots, int count, CallbackInfoReturnable<Boolean> cir) {
         if (cir.getReturnValue() && recipe != null) {
-            List<ItemStack> byproducts;
+            List<Byproduct> byproducts;
             if (recipe.value() instanceof WONSmeltingRecipe wonRecipe)
-                byproducts = wonRecipe.getByproducts(registryManager);
+                byproducts = wonRecipe.getByproducts();
             else if (recipe.value() instanceof WONBlastingRecipe wonRecipe)
-                byproducts = wonRecipe.getByproducts(registryManager);
+                byproducts = wonRecipe.getByproducts();
             else return;
-            for (int i = 0; i < Math.min(byproducts.size(), 3); i++) {
-                int slotIndex = 3 + i;
-                if (slots.size() > slotIndex) {
-                    ItemStack byproduct = byproducts.get(i);
-                    if (!byproduct.isEmpty()) {
-                        ItemStack byproductSlot = slots.get(slotIndex);
-                        if (byproductSlot.isEmpty()) {
-                            slots.set(slotIndex, byproduct.copy());
-                        } else if (ItemStack.isSameItemSameComponents(byproductSlot, byproduct)) {
-                            byproductSlot.grow(byproduct.getCount());
-                        }
+            int slot = 3;
+            for (Byproduct bp : byproducts) {
+                if (new Random().nextDouble() <= bp.chance()) {
+                    var stack = slots.get(slot);
+                    if (stack.isEmpty()) {
+                        slots.set(slot, bp.item().copy());
+                    } else {
+                        stack.grow(bp.item().getCount());
+                        slots.set(slot, stack);
                     }
+                    slot++;
                 }
             }
         }

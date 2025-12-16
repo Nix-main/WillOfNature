@@ -16,11 +16,11 @@ class ItemTagsProvider(o: FabricDataOutput, r: CompletableFuture<HolderLookup.Pr
 
 
         conventionTags()
-        copy(BlockTags.STAIRS, ItemTags.STAIRS)
+        // copy(BlockTags.STAIRS, ItemTags.STAIRS)
     }
 
     fun conventionTags() {
-        getOrCreateTagBuilder(ConventionalItemTags.EGGS)
+//        getOrCreateTagBuilder(ConventionalItemTags.EGGS)
 //            .add(Items.HEAVY_CORE)
     }
 }

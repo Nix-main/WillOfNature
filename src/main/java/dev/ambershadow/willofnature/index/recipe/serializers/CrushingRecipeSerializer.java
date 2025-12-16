@@ -4,7 +4,9 @@ import dev.ambershadow.willofnature.index.recipe.CrushingRecipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.ambershadow.willofnature.util.Byproduct;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -25,9 +27,9 @@ public class CrushingRecipeSerializer implements RecipeSerializer<CrushingRecipe
                 Ingredient.CODEC_NONEMPTY.fieldOf("ingredient").forGetter(CrushingRecipe::getIngredient),
                 ItemStack.STRICT_CODEC.fieldOf("result").forGetter(r -> r.getResultItem(null)),
                 Codec.INT.fieldOf("time").orElse(200).forGetter(CrushingRecipe::getTime),
-                ItemStack.STRICT_CODEC.listOf(0, 3)
-                    .optionalFieldOf("byproducts", List.of())
-                    .forGetter(CrushingRecipe::getByproducts),
+                Byproduct.CODEC.listOf()
+                        .optionalFieldOf("byproducts", List.of())
+                        .forGetter(CrushingRecipe::getByproducts),
                 Codec.INT.optionalFieldOf("energy", 500).forGetter(CrushingRecipe::getEnergy)
             ).apply(instance, CrushingRecipe::new)
         );
@@ -43,10 +45,11 @@ public class CrushingRecipeSerializer implements RecipeSerializer<CrushingRecipe
         buf.writeVarInt(recipe.getTime());
         Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.getIngredient());
         ItemStack.STREAM_CODEC.encode(buf, recipe.getResultItem(null));
-        List<ItemStack> byproducts = recipe.getByproducts();
+        List<Byproduct> byproducts = recipe.getByproducts();
         buf.writeVarInt(byproducts.size());
-        for (ItemStack byproduct : byproducts) {
-            ItemStack.STREAM_CODEC.encode(buf, byproduct);
+        for (Byproduct byproduct : byproducts) {
+            ItemStack.STREAM_CODEC.encode(buf, byproduct.item());
+            ByteBufCodecs.FLOAT.encode(buf, byproduct.chance());
         }
         buf.writeVarInt(recipe.getEnergy());
     }
@@ -57,9 +60,9 @@ public class CrushingRecipeSerializer implements RecipeSerializer<CrushingRecipe
         var ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
         var result = ItemStack.STREAM_CODEC.decode(buf);
         var bpSize = buf.readVarInt();
-        var byproducts = new ArrayList<ItemStack>(bpSize);
+        var byproducts = new ArrayList<Byproduct>(bpSize);
         for (int i = 0; i < bpSize; i++) {
-            byproducts.add(ItemStack.STREAM_CODEC.decode(buf));
+            byproducts.add(new Byproduct(ItemStack.STREAM_CODEC.decode(buf), buf.readFloat()));
         }
         var energy = buf.readVarInt();
         return new CrushingRecipe(group, ingredient, result, time, byproducts, energy);

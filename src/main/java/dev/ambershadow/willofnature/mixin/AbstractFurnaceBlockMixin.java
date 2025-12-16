@@ -1,6 +1,6 @@
 package dev.ambershadow.willofnature.mixin;
 
-import dev.ambershadow.willofnature.index.WONBlocks;
+import dev.ambershadow.willofnature.registration.WONBlocks;
 import dev.ambershadow.willofnature.index.block.entities.WONBlastFurnaceBlockEntity;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.state.BlockState;

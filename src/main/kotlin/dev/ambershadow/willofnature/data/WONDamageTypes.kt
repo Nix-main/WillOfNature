@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity
 
 
 object WONDamageTypes {
-    val GAY = create("gay")
+    // val GAY = create("gay")
 
     fun create(id: String): ResourceKey<DamageType> = ResourceKey.create(Registries.DAMAGE_TYPE, id(id))
 

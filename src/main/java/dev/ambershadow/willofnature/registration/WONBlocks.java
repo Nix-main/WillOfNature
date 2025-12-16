@@ -1,9 +1,11 @@
-package dev.ambershadow.willofnature.index;
+package dev.ambershadow.willofnature.registration;
 
 import dev.ambershadow.willofnature.index.block.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class WONBlocks {
     static void init(){}

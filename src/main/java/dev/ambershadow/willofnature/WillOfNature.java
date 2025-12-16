@@ -1,7 +1,7 @@
 package dev.ambershadow.willofnature;
 
 import dev.ambershadow.willofnature.command.WONCommand;
-import dev.ambershadow.willofnature.index.WONRegistrar;
+import dev.ambershadow.willofnature.registration.WONRegistrar;
 import com.mojang.brigadier.CommandDispatcher;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -26,7 +26,6 @@ public class WillOfNature implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(WillOfNature::registerCommands);
         WONRegistrar.registerAll();
-
     }
 
     public static @NotNull ResourceLocation id(String path) {

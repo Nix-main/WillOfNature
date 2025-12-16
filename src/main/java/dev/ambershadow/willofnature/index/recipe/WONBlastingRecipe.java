@@ -1,10 +1,11 @@
 package dev.ambershadow.willofnature.index.recipe;
 
-import dev.ambershadow.willofnature.index.WONRecipeSerializers;
-import dev.ambershadow.willofnature.index.WONRecipeTypes;
+import dev.ambershadow.willofnature.registration.WONRecipeSerializers;
+import dev.ambershadow.willofnature.registration.WONRecipeTypes;
 import dev.ambershadow.willofnature.index.block.entities.WONBlastFurnaceBlockEntity;
 import dev.ambershadow.willofnature.mixin.RecipeManagerAccessor;
 import dev.ambershadow.willofnature.util.BlastingRecipeInput;
+import dev.ambershadow.willofnature.util.Byproduct;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Tuple;
@@ -39,10 +40,10 @@ public class WONBlastingRecipe implements Recipe<RecipeInput> {
     private final int cookingTime;
     private final Fluid fluid;
     private final long fluidAmount;
-    private final List<ItemStack> byproducts;
+    private final List<Byproduct> byproducts;
 
     public WONBlastingRecipe(String group, CookingBookCategory category, Ingredient ingredient, ItemStack result,
-                             float experience, int cookingTime, List<ItemStack> byproducts, Tuple<Fluid, Long> fluidAmountPair) {
+                             float experience, int cookingTime, List<Byproduct> byproducts, Tuple<Fluid, Long> fluidAmountPair) {
         this.group = group;
         this.category = category;
         this.ingredient = ingredient;
@@ -53,9 +54,9 @@ public class WONBlastingRecipe implements Recipe<RecipeInput> {
         this.fluid = fluidAmountPair.getA();
         this.fluidAmount = fluidAmountPair.getB();
     }
-    public List<ItemStack> getByproducts(HolderLookup.Provider registries) {
-        List<ItemStack> copies = new ArrayList<>();
-        for (ItemStack byproduct : byproducts) {
+    public List<Byproduct> getByproducts() {
+        List<Byproduct> copies = new ArrayList<>();
+        for (Byproduct byproduct : byproducts) {
             copies.add(byproduct.copy());
         }
         return copies;

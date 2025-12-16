@@ -1,7 +1,7 @@
 package dev.ambershadow.willofnature.index.screens;
 
-import dev.ambershadow.willofnature.index.WONRecipeTypes;
-import dev.ambershadow.willofnature.index.WONScreenHandlers;
+import dev.ambershadow.willofnature.registration.WONRecipeTypes;
+import dev.ambershadow.willofnature.registration.WONScreenHandlers;
 import dev.ambershadow.willofnature.index.recipe.CrushingRecipe;
 import dev.ambershadow.willofnature.util.CrushingRecipeInput;
 import dev.ambershadow.willofnature.util.EnergyHoldingScreenHandler;

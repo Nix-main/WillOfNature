@@ -20,7 +20,11 @@
       "dev.ambershadow.willofnature.client.WillOfNatureClient"
     ],
     "main": [
-      "dev.ambershadow.willofnature.WillOfNature"
+      "dev.ambershadow.willofnature.WillOfNature",
+      {
+        "adapter": "kotlin",
+        "value": "dev.ambershadow.willofnature.WillOfNatureKt"
+      }
     ]
   },
   "mixins": [

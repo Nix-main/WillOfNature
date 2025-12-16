@@ -1,6 +1,6 @@
 package dev.ambershadow.willofnature.index.block;
 
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import dev.ambershadow.willofnature.index.block.entities.CopperPipeBlockEntity;
 import dev.ambershadow.willofnature.index.block.entities.InputPipeBlockEntity;
 import dev.ambershadow.willofnature.index.block.entities.OutputPipeBlockEntity;

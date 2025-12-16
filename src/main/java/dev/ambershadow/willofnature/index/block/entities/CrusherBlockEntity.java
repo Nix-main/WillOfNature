@@ -1,8 +1,9 @@
 package dev.ambershadow.willofnature.index.block.entities;
 
-import dev.ambershadow.willofnature.index.WONBlockEntities;
+import dev.ambershadow.willofnature.registration.WONBlockEntities;
 import dev.ambershadow.willofnature.index.recipe.CrushingRecipe;
 import dev.ambershadow.willofnature.index.screens.CrusherScreenHandler;
+import dev.ambershadow.willofnature.util.Byproduct;
 import dev.ambershadow.willofnature.util.CrushingRecipeInput;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import team.reborn.energy.api.base.SimpleEnergyStorage;
 
 import java.util.List;
+import java.util.Random;
 
 public class CrusherBlockEntity extends BaseContainerBlockEntity implements MenuProvider, Nameable, WorldlyContainer, RecipeCraftingHolder, StackedContentsCompatible {
 
@@ -183,6 +185,11 @@ public class CrusherBlockEntity extends BaseContainerBlockEntity implements Menu
         }
     }
 
+    private static int getTime(Level world, CrusherBlockEntity crusher) {
+        var opt = CrushingRecipe.findAnyMatch(crusher.inventory, world);
+        return opt.map(crushingRecipeRecipeEntry -> crushingRecipeRecipeEntry.value().getTime()).orElse(200);
+    }
+
     private static boolean canAcceptRecipeOutput(RegistryAccess registryManager, @Nullable RecipeHolder<?> recipe, NonNullList<ItemStack> slots, int count) {
         if (slots.getFirst().isEmpty() || recipe == null) {
             return false;
@@ -191,7 +198,7 @@ public class CrusherBlockEntity extends BaseContainerBlockEntity implements Menu
         if (itemStack.isEmpty()) {
             return false;
         }
-        ItemStack itemStack2 = slots.get(2);
+        ItemStack itemStack2 = slots.get(1);
         if (itemStack2.isEmpty()) {
             return true;
         }
@@ -204,19 +211,17 @@ public class CrusherBlockEntity extends BaseContainerBlockEntity implements Menu
         return itemStack2.getCount() < itemStack.getMaxStackSize();
     }
 
-    private static int getTime(Level world, CrusherBlockEntity crusher) {
-        var opt = CrushingRecipe.findAnyMatch(crusher.inventory, world);
-        return opt.map(crushingRecipeRecipeEntry -> crushingRecipeRecipeEntry.value().getTime()).orElse(200);
-    }
-
     public static void tick(Level world, BlockPos pos, BlockState state, CrusherBlockEntity blockEntity) {
         if (world.isClientSide) return;
         var match = CrushingRecipe.findAnyMatch(blockEntity.inventory, world);
         if (match.isPresent()
                 && match.get() instanceof RecipeHolder<CrushingRecipe> recipe
-                && recipe.value().matches(new CrushingRecipeInput(blockEntity.inventory.getFirst(), blockEntity.getByproducts()), world)
-                && (blockEntity.inventory.get(1).equals(ItemStack.EMPTY)
-                || ItemStack.isSameItemSameComponents(recipe.value().getResultItem(world.registryAccess()), blockEntity.inventory.get(1)))) {
+                && recipe.value().matches(
+                new CrushingRecipeInput(blockEntity.inventory.getFirst(), blockEntity.getByproducts()), world)
+                && canAcceptRecipeOutput(world.registryAccess(),
+                recipe, blockEntity.inventory, recipe.value().getResultItem(world.registryAccess())
+                        .getCount())) {
+
 
             int totalEnergy = recipe.value().getEnergy();
             int totalTime = getTime(world, blockEntity);
@@ -249,13 +254,11 @@ public class CrusherBlockEntity extends BaseContainerBlockEntity implements Menu
                 return;
             }
 
-            if (blockEntity.cookTime < remainder) {
-                if (blockEntity.energy.amount > 0) {
-                    blockEntity.energy.amount -= 1;
-                    blockEntity.energyUsed += 1;
-                } else {
-                    return; 
-                }
+            blockEntity.energyRemainder += totalEnergy % totalTime;
+            if (blockEntity.energyRemainder >= totalTime) {
+                blockEntity.energyRemainder -= totalTime;
+                blockEntity.energy.amount -= 1;
+                blockEntity.energyUsed += 1;
             }
 
             blockEntity.cookTime = Mth.clamp(blockEntity.cookTime + 1, 0, totalTime);
@@ -276,12 +279,16 @@ public class CrusherBlockEntity extends BaseContainerBlockEntity implements Menu
                     blockEntity.inventory.get(1).grow(recipe.value().getResultItem(world.registryAccess()).getCount());
                 }
 
-                for (int i = recipe.value().getByproducts().size() - 1; i >= 0; i--) {
-                    var byproduct = blockEntity.inventory.get(i + 2);
-                    if (byproduct.isEmpty()) {
-                        blockEntity.inventory.set(i + 2, recipe.value().getByproducts().get(i).copy());
-                    } else {
-                        byproduct.grow(recipe.value().getByproducts().get(i).copy().getCount());
+                int slot = 2;
+                for (Byproduct bp : recipe.value().getByproducts()) {
+                    if (new Random().nextDouble() <= bp.chance()) {
+                        var stack = blockEntity.inventory.get(slot);
+                        if (stack.isEmpty()) {
+                            blockEntity.inventory.set(slot, bp.item().copy());
+                        } else {
+                            stack.grow(bp.item().getCount());
+                        }
+                        slot++;
                     }
                 }
             }

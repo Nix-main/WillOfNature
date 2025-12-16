@@ -4,7 +4,7 @@ import dev.ambershadow.willofnature.client.networking.UpdateFluidS2CPacket;
 import dev.ambershadow.willofnature.client.screens.CrusherScreen;
 import dev.ambershadow.willofnature.client.screens.WONBlastFurnaceScreen;
 import dev.ambershadow.willofnature.client.screens.WONFurnaceScreen;
-import dev.ambershadow.willofnature.index.WONScreenHandlers;
+import dev.ambershadow.willofnature.registration.WONScreenHandlers;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.screens.MenuScreens;

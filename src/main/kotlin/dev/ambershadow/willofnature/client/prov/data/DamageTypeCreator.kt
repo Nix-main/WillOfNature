@@ -9,10 +9,10 @@ import net.minecraft.world.damagesource.DamageTypes
 object DamageTypeCreator {
     fun bootstrap(c: BootstrapContext<DamageType>) {
         // Steal from DamageTypes.class
-        c.register(
-            WONDamageTypes.GAY,
-            DamageType(WONDamageTypes.GAY.location().path, DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 1f)
-        )
+//        c.register(
+//            WONDamageTypes.GAY,
+//            DamageType(WONDamageTypes.GAY.location().path, DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER, 1f)
+//        )
     }
 
 }

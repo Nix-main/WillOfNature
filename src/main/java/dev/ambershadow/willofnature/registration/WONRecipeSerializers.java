@@ -1,4 +1,4 @@
-package dev.ambershadow.willofnature.index;
+package dev.ambershadow.willofnature.registration;
 
 import dev.ambershadow.willofnature.index.recipe.CrushingRecipe;
 import dev.ambershadow.willofnature.index.recipe.WONBlastingRecipe;

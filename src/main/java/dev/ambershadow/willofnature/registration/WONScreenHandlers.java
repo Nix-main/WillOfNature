@@ -1,4 +1,4 @@
-package dev.ambershadow.willofnature.index;
+package dev.ambershadow.willofnature.registration;
 
 import dev.ambershadow.willofnature.index.screens.CrusherScreenHandler;
 import dev.ambershadow.willofnature.index.screens.WONBlastFurnaceScreenHandler;
